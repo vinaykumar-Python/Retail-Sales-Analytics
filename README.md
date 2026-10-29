@@ -1,3 +1,19 @@
+## 📊 Power BI Dashboard
+
+The interactive dashboard provides a consolidated view of retail sales performance, profitability, and business trends.
+
+### Dashboard Preview
+
+![Retail Sales Analytics Power BI Dashboard](powerbi/dashboard_screenshot.png)
+
+### Key Features
+- **KPI Summary:** Total Sales, Total Profit, Total Orders, Total Quantity, and Profit Margin.
+- **Category Analysis:** Compare sales and profitability across product categories.
+- **Regional Performance:** Evaluate sales and profit across different regions.
+- **Monthly Trends:** Track sales and profit over time.
+- **Interactive Filters:** Explore results by region, category, segment, and order date.
+
+**Power BI Report:** [`Retail_Sales_Analytics.pbix`](powerbi/Retail_Sales_Analytics.pbix)
 # Retail Sales Analytics
 
 ### An End-to-End Data Analytics Project Using Python, SQL, Excel, and Power BI
