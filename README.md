@@ -203,19 +203,35 @@ Both Welch's t-test and the Mann–Whitney U test reported statistically signifi
 
 **Interpretation caution:** These are record-level comparisons, and multiple records may belong to the same order. Further analysis should account for order-level dependence and other potential confounding factors. Statistical association does not establish causation.
 
-### Year-over-Year Analysis
+## Reporting Period and Year-over-Year Analysis
 
-The annual SQL analysis reported the following figures:
+### Reporting Period
 
-| Year | Sales | Profit | Sales Growth | Profit Growth |
-|---|---:|---:|---:|---:|
-| 2023 | 494,040.21 | 51,684.30 | — | — |
-| 2024 | 472,993.03 | 62,020.97 | -4.26% | 20.00% |
-| 2025 | 613,933.58 | 82,665.20 | 29.80% | 33.29% |
-| 2026 | 745,567.53 | 95,926.35 | 21.44% | 16.04% |
+The supplied dataset contains order dates from January 3, 2023, through December 30, 2026. For reporting as of October 31, 2026, records after that date are excluded from the cutoff-based analysis.
 
-The 2026 figures may include future-dated records and should not be treated as a completed calendar-year result. The 2025 versus 2024 comparison represents the most recent completed-year comparison available in the current output.
+The original source data is preserved. Future-dated records are not automatically deleted because they are present in both the raw and cleaned datasets.
 
+### January–October Comparison
+
+| Metric | Jan–Oct 2025 | Jan–Oct 2026 |
+|---|---:|---:|
+| Records | 1,898 | 2,437 |
+| Sales | 437,019.34 | 541,937.99 |
+| Profit | 60,727.49 | 77,578.42 |
+| Profit Margin | 13.90% | 14.31% |
+
+**Key findings from the supplied dataset:**
+- Sales increased by 24.01%.
+- Profit increased by 27.75%.
+- Profit margin improved by approximately 0.42 percentage points.
+
+These results are based on the supplied dataset and do not independently establish actual business performance.
+
+### Analytical Consideration
+
+A partial-year total should not be directly compared with a full-year total to determine year-over-year growth. The January–October comparison uses matching reporting periods to provide a more meaningful comparison.
+
+The source dataset's provenance and completeness have not been independently verified.
 ## 8. Power BI Dashboard Features
 
 The main dashboard includes:

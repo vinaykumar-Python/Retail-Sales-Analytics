@@ -248,3 +248,25 @@ SELECT
 
 FROM Yearly_Comparison
 ORDER BY Year;
+
+-- ============================================================
+-- 14. Reporting-period validation as of October 31, 2026
+-- ============================================================
+
+SELECT
+    'Through 2026-10-31' AS Reporting_Period,
+
+    COUNT(*) AS Total_Records,
+
+    ROUND(SUM(Sales), 2) AS Total_Sales,
+
+    ROUND(SUM(Profit), 2) AS Total_Profit,
+
+    ROUND(
+        100.0 * SUM(Profit) / NULLIF(SUM(Sales), 0),
+        2
+    ) AS Profit_Margin_Percentage
+
+FROM sales
+
+WHERE date("Order Date") <= date('2026-10-31');
