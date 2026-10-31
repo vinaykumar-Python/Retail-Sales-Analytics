@@ -1,64 +1,47 @@
-## 📊 Power BI Dashboard
-
-The interactive dashboard provides a consolidated view of retail sales performance, profitability, and business trends.
-
-### Dashboard Preview
-
-![Retail Sales Analytics Power BI Dashboard](powerbi/dashboard_screenshot.png)
-
-### Key Features
-- **KPI Summary:** Total Sales, Total Profit, Total Orders, Total Quantity, and Profit Margin.
-- **Category Analysis:** Compare sales and profitability across product categories.
-- **Regional Performance:** Evaluate sales and profit across different regions.
-- **Monthly Trends:** Track sales and profit over time.
-- **Interactive Filters:** Explore results by region, category, segment, and order date.
-
-**Power BI Report:** [`Retail_Sales_Analytics.pbix`](powerbi/Retail_Sales_Analytics.pbix)
 # Retail Sales Analytics
 
 ### An End-to-End Data Analytics Project Using Python, SQL, Excel, and Power BI
 
 ## 1. Project Overview
 
-Retail Sales Analytics is an end-to-end data analytics project that examines retail sales transactions to understand sales performance, profitability, regional differences, product category performance, and discount-related losses.
+Retail Sales Analytics is an end-to-end data analytics project that examines retail transactions to understand sales performance, profitability, regional differences, product category performance, and discount-related losses.
 
-The project uses Python for data preparation and exploratory data analysis, SQL for business queries, Excel for PivotTables and KPI analysis, and Power BI for interactive dashboard development.
+The project combines Python for data preparation and exploratory data analysis, SQL for business analysis, Excel for PivotTables and KPI analysis, and Power BI for interactive dashboards and business recommendations.
 
-The objective is to turn raw retail transaction data into meaningful business insights that can support data-driven decision-making.
+The objective is to transform raw transaction data into meaningful insights that support data-driven business decisions.
 
-## 2. Business Problem
+## 2. Business Problems
 
-Retail businesses need to understand more than their total revenue. They must identify profitable product categories, compare regional performance, monitor trends over time, and investigate products or discount levels associated with losses.
-
-This project addresses the following business questions:
+This project investigates the following business questions:
 
 - What are the overall sales, profit, and profit margin?
 - Which product categories generate the most sales and profit?
 - Which regions contribute the most to profitability?
 - Which product subcategories generate losses?
 - How do sales and profit change over time?
-- How are discount levels associated with profitability?
-- How can business users explore results through an interactive dashboard?
+- Are high discounts associated with lower profitability?
+- How can interactive dashboards help stakeholders explore business performance?
 
 ## 3. Project Objectives
 
-- Clean and prepare raw retail transaction data.
+- Inspect, clean, and validate retail transaction data.
 - Perform exploratory data analysis using Python.
-- Store the cleaned data in a SQLite database.
-- Write SQL queries to answer business questions.
-- Analyze performance using Excel PivotTables and formulas.
-- Build an interactive Power BI dashboard.
-- Communicate findings through clear metrics, visualizations, and documentation.
+- Store cleaned data in a SQLite database.
+- Use SQL aggregation and window functions for business analysis.
+- Perform statistical tests to investigate discount-related profitability differences.
+- Build Excel PivotTables, charts, and KPI summaries.
+- Develop interactive Power BI dashboards and recommendations.
+- Document the workflow for reproducibility.
 
 ## 4. Dataset Description
 
-The project uses a Superstore retail sales dataset containing approximately 10,194 transaction rows and 21 columns.
+The project uses a Superstore retail sales dataset containing 10,194 transaction rows and 21 columns.
 
 Important fields include:
 
 | Field | Description |
 |---|---|
-| Order ID | Identifier for an order |
+| Order ID | Order identifier |
 | Order Date | Date the order was placed |
 | Ship Date | Date the order was shipped |
 | Customer ID | Customer identifier |
@@ -71,64 +54,87 @@ Important fields include:
 | Quantity | Quantity sold |
 | Discount | Discount applied |
 
-The data is used for analytical and educational purposes.
+The dataset is used for analytical and educational purposes.
 
 ## 5. Tools and Technologies
 
 | Technology | Purpose |
 |---|---|
-| Python | Data inspection, cleaning, and exploratory analysis |
+| Python | Data inspection, cleaning, and analysis |
 | Pandas | Data manipulation and preparation |
 | Matplotlib | Exploratory data visualizations |
-| SQLite | Local database storage and querying |
-| SQL | Business analysis and aggregation |
-| Microsoft Excel | PivotTables, KPI calculations, and discount analysis |
-| Power BI Desktop | Interactive business intelligence dashboard |
+| SciPy | Statistical hypothesis testing |
+| SQLite | Local database storage |
+| SQL | Business analysis and window functions |
+| Microsoft Excel | PivotTables, charts, and KPI calculations |
+| Power BI Desktop | Interactive dashboards and recommendations |
 | Git and GitHub | Version control and project sharing |
 
 ## 6. Project Workflow
 
 ### Step 1: Data Inspection
 
-Inspected the source dataset to understand its structure, columns, data types, and data quality.
+Inspected the source dataset to understand its structure, fields, data types, and potential data-quality issues.
 
 ### Step 2: Data Cleaning
 
-Used Python to standardize column names, trim text values, remove exact duplicate rows, convert date fields, convert numeric fields, and inspect potential data-quality issues.
+Used Python to standardize data, trim text values, remove exact duplicate rows, convert date and numeric fields, and inspect potential data-quality issues.
 
 The cleaned dataset was exported to CSV format.
 
 ### Step 3: Exploratory Data Analysis
 
-Used Python to generate visualizations and summary information to explore the dataset and identify patterns that warranted further investigation.
+Used Python to generate charts and summary statistics to explore sales, profit, categories, regions, and discount patterns.
 
 ### Step 4: Database Creation
 
-Loaded the cleaned data into a local SQLite database for structured querying.
+Loaded the cleaned dataset into SQLite to support structured SQL analysis.
 
 ### Step 5: SQL Business Analysis
 
-Developed SQL queries to calculate overall performance, compare product categories and regions, identify loss-making subcategories, and analyze monthly sales and profit.
+Developed SQL queries covering:
+
+- Overall sales, profit, quantity, and profit margin
+- Category and regional performance
+- Loss-making product subcategories
+- Top products and customer segments
+- Shipping mode performance
+- Monthly sales and profit
+- Discount-level profitability
+- Running totals using `SUM() OVER()`
+- Profitability rankings using `RANK()` and `DENSE_RANK()`
+- Year-over-year comparisons using `LAG()`
 
 ### Step 6: Excel Analysis
 
-Created PivotTables and charts to analyze:
+Created PivotTables, charts, and KPI calculations to investigate category performance, regional performance, monthly trends, and discount-level profitability.
 
-- Sales and profit by category
-- Regional sales and profit
-- Monthly sales and profit trends
-- Discount-level performance
-- Overall business KPIs
+### Step 7: Statistical Analysis
 
-### Step 7: Power BI Dashboard
+Used Python and SciPy to compare records with discounts of 30% or less against records with discounts above 30%.
 
-Developed a dashboard with KPI measures, category comparisons, regional performance, monthly trends, and interactive slicers.
+The analysis includes descriptive statistics, Welch's independent-samples t-test, and the Mann–Whitney U test.
 
-The dashboard is designed to help users explore performance across regions, product categories, customer segments, and dates.
+The initial tests operate at the individual sales-record level. Multiple records can belong to the same order, so the independence assumption may be violated. The results should therefore be treated as preliminary evidence of an association, not proof of causation.
+
+### Step 8: Power BI Dashboard
+
+Developed an interactive dashboard with KPI cards, category comparisons, regional performance, monthly trends, and slicers for exploring the data.
+
+### Step 9: Power BI Recommendations
+
+Added a separate Recommendations page with business actions related to:
+
+- Reviewing high-discount transactions
+- Investigating loss-making subcategories
+- Protecting profitability in high-performing subcategories
+- Monitoring sales growth alongside profit growth
+
+The recommendations are based on the current dataset analysis and should be reviewed alongside data-quality and statistical limitations.
 
 ## 7. Key Business Findings
 
-The following results were calculated from the cleaned dataset.
+The following figures were calculated from the current cleaned dataset.
 
 | Metric | Result |
 |---|---:|
@@ -137,10 +143,13 @@ The following results were calculated from the cleaned dataset.
 | Total Quantity Sold | 38,654 |
 | Profit Margin | 12.56% |
 | Total Distinct Orders | 5,111 |
+| Transaction Rows | 10,194 |
+
+**Note:** The dataset contains order dates through December 2026. Because those dates extend beyond the current date of October 31, 2026, the future-dated records should be investigated before the results are described as strictly historical performance.
 
 ### Category Performance
 
-Technology generated the highest sales among the three product categories.
+Technology generated the highest sales and profit among the three product categories.
 
 | Category | Sales | Profit |
 |---|---:|---:|
@@ -161,7 +170,7 @@ The West region recorded the highest sales and profit among the four regions.
 
 ### Loss-Making Subcategories
 
-The following subcategories reported negative total profit:
+Three subcategories reported negative total profit.
 
 | Subcategory | Sales | Profit |
 |---|---:|---:|
@@ -169,30 +178,72 @@ The following subcategories reported negative total profit:
 | Bookcases | 115,361.20 | -3,632.07 |
 | Supplies | 46,725.50 | -1,171.39 |
 
-### Discount Analysis
+### Subcategory Profitability Ranking
 
-The Excel analysis showed negative aggregate profit at several discount levels, including 30%, 40%, 50%, 60%, 70%, and 80%.
+The SQL ranking analysis identified Copiers as the highest-profit subcategory, with total profit of 56,093.94.
 
-These findings indicate that the relationship between discounts and profitability deserves further investigation. They do not, by themselves, prove that discounts caused the losses.
+Phones ranked second, with total profit of 45,050.83.
+
+These findings demonstrate why sales revenue and profit should be evaluated separately.
+
+### Discount and Profitability Analysis
+
+The initial record-level analysis produced the following results:
+
+| Metric | Discount ≤ 30% | Discount > 30% |
+|---|---:|---:|
+| Record count | 9,009 | 1,185 |
+| Mean profit per record | 46.38 | -105.91 |
+| Median profit per record | 10.89 | -17.25 |
+| Total profit | 417,804.05 | -125,507.24 |
+
+The difference in average profit was -152.29 per record when comparing the above-30% group with the 30%-or-less group.
+
+Both Welch's t-test and the Mann–Whitney U test reported statistically significant differences in the initial analysis.
+
+**Interpretation caution:** These are record-level comparisons, and multiple records may belong to the same order. Further analysis should account for order-level dependence and other potential confounding factors. Statistical association does not establish causation.
+
+### Year-over-Year Analysis
+
+The annual SQL analysis reported the following figures:
+
+| Year | Sales | Profit | Sales Growth | Profit Growth |
+|---|---:|---:|---:|---:|
+| 2023 | 494,040.21 | 51,684.30 | — | — |
+| 2024 | 472,993.03 | 62,020.97 | -4.26% | 20.00% |
+| 2025 | 613,933.58 | 82,665.20 | 29.80% | 33.29% |
+| 2026 | 745,567.53 | 95,926.35 | 21.44% | 16.04% |
+
+The 2026 figures may include future-dated records and should not be treated as a completed calendar-year result. The 2025 versus 2024 comparison represents the most recent completed-year comparison available in the current output.
 
 ## 8. Power BI Dashboard Features
 
-The dashboard includes:
+The main dashboard includes:
 
 - Total Sales KPI
 - Total Profit KPI
 - Total Orders KPI
 - Total Quantity KPI
 - Profit Margin KPI
-- Sales and Profit by Product Category
-- Regional Sales and Profit Performance
-- Monthly Sales and Profit Trend
+- Sales and profit by category
+- Regional sales and profit performance
+- Monthly sales and profit trends
 - Region slicer
 - Category slicer
 - Segment slicer
 - Order Date slicer
 
-These features enable users to explore the data interactively.
+The separate Recommendations page presents business actions derived from the analysis.
+
+### Dashboard Preview
+
+![Retail Sales Analytics Power BI Dashboard](powerbi/dashboard_screenshot.png)
+
+### Power BI Report
+
+[Open the Power BI report file](powerbi/Retail_Sales_Analytics.pbix)
+
+**Requirement:** The `.pbix` file must be opened using Power BI Desktop.
 
 ## 9. Project Structure
 
@@ -200,80 +251,134 @@ These features enable users to explore the data interactively.
 Retail-Sales-Analytics/
 ├── data/
 │   ├── raw/
+│   │   └── sample_-_superstore.xls
 │   └── processed/
+│       ├── superstore_cleaned.csv
+│       └── retail_sales.db
 ├── scripts/
 │   ├── inspect_data.py
 │   ├── clean_data.py
 │   ├── eda_analysis.py
 │   ├── load_sqlite.py
-│   └── run_sql_analysis.py
+│   ├── run_sql_analysis.py
+│   └── discount_hypothesis_test.py
 ├── sql/
 │   └── business_analysis.sql
 ├── excel/
 │   └── Retail_Sales_Analysis.xlsx
-├── notebooks/
 ├── powerbi/
-│   └── Retail_Sales_Analytics.pbix
+│   ├── Retail_Sales_Analytics.pbix
+│   └── dashboard_screenshot.png
 ├── reports/
-│   └── eda_charts/
+│   ├── eda_charts/
+│   └── statistical_analysis/
+│       ├── discount_group_summary.csv
+│       └── discount_test_results.txt
 └── README.md
 ```
 
-## 10. How to Run the Python Scripts
+This structure reflects the intended project layout. Confirm that the listed files exist in your local repository before committing the README.
+
+## 10. Setup and Installation
 
 ### Requirements
 
 - Python 3
-- Pandas
-- Matplotlib
-- xlrd
-- SQLite support
+- Power BI Desktop for opening and exploring the `.pbix` report
+- Git for version control (optional if downloading the project as a ZIP)
 
-Install the required packages:
+### Step 1: Open the project directory
 
-```bash
-pip install pandas matplotlib xlrd
+Open a terminal in the project root:
+
+```powershell
+cd D:\Resume_prjs\Retail-Sales-Analytics
 ```
 
-Run the scripts from the project root directory:
+### Step 2: Create a virtual environment
 
-```bash
+```powershell
+python -m venv .venv
+```
+
+Activate it in Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+If PowerShell blocks activation, you can use Command Prompt instead:
+
+```bat
+.venv\Scripts\activate.bat
+```
+
+### Step 3: Install the Python dependencies
+
+```powershell
+python -m pip install --upgrade pip
+python -m pip install pandas matplotlib openpyxl xlrd scipy
+```
+
+### Step 4: Run the analysis scripts
+
+Run these commands from the project root, in order:
+
+```powershell
 python scripts/inspect_data.py
 python scripts/clean_data.py
 python scripts/eda_analysis.py
 python scripts/load_sqlite.py
 python scripts/run_sql_analysis.py
+python scripts/discount_hypothesis_test.py
 ```
 
-Run the scripts in the order shown above so that the required cleaned data and database are available.
+The source dataset must be available at the path and filename expected by the scripts.
 
-The source dataset must be placed in `data/raw/` using the filename expected by the inspection and cleaning scripts.
+The inspection, cleaning, and database-loading scripts should be run before the downstream analyses when rebuilding the project from raw data.
+
+### Step 5: Open the Excel workbook
+
+Open:
+
+`excel/Retail_Sales_Analysis.xlsx`
+
+Use the workbook to explore PivotTables, KPI calculations, and charts.
+
+### Step 6: Open the Power BI report
+
+Open:
+
+`powerbi/Retail_Sales_Analytics.pbix`
+
+Use Power BI Desktop to explore the dashboard and Recommendations page.
 
 ## 11. Limitations
 
-- The findings describe the available dataset and may not represent every retail business.
-- The analysis is primarily descriptive rather than predictive.
-- Associations between discounts and losses do not establish causation.
-- Historical patterns do not guarantee future performance.
-- Further investigation of costs, product mix, customers, and operational factors could provide additional context.
+- Results describe the available dataset and may not generalize to every retail business.
+- Future-dated records require investigation before final historical reporting.
+- The initial discount tests compare individual sales records and may violate the independence assumption when records share an order.
+- The statistical findings show association, not proof of causation.
+- The initial analysis is descriptive and does not establish causal relationships.
+- Further analysis could account for order-level dependence, product mix, customer characteristics, and other factors.
 
 ## 12. Future Improvements
 
 Potential enhancements include:
 
-- Adding customer-level profitability analysis.
-- Developing a product-level profit optimization report.
-- Investigating the relationship between discounts and profit using statistical methods.
-- Adding automated data refresh and validation.
-- Introducing more detailed customer segmentation.
-- Publishing an accessible Power BI report where appropriate.
+- Order-level statistical analysis of discount and profit relationships.
+- Product-level profitability and pricing analysis.
+- More detailed customer segmentation.
+- Additional data-quality checks and date validation.
+- Automated data refresh and report generation.
+- More advanced business intelligence measures.
 
 ## 13. Conclusion
 
-This project demonstrates an end-to-end retail data analytics workflow, from raw data inspection and cleaning to SQL querying, spreadsheet analysis, and interactive business intelligence reporting.
+This project demonstrates an end-to-end retail analytics workflow, from raw data inspection and cleaning to SQL analysis, Excel reporting, statistical testing, and interactive Power BI dashboards.
 
-It highlights how multiple analytics tools can work together to transform transaction data into useful business metrics and insights.
+It combines technical analysis with business recommendations to demonstrate how retail transaction data can be transformed into useful insights.
 
 ## Author
 
-Developed as a data analytics portfolio project demonstrating Python, SQL, Excel, and Power BI skills.
+Developed as a data analytics portfolio project demonstrating Python, SQL, Excel, Power BI, and statistical analysis skills.

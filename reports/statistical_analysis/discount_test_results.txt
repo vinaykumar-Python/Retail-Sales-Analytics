@@ -1,0 +1,15 @@
+DISCOUNT AND PROFITABILITY STATISTICAL ANALYSIS
+============================================================
+
+Descriptive statistics:
+Discount_Group  Record_Count  Mean_Profit  Median_Profit  Total_Profit  Standard_Deviation
+   30% or Less          9009      46.3763        10.8864   417804.0548            205.0739
+     Above 30%          1185    -105.9133       -17.2480  -125507.2402            353.2045
+
+Mean profit difference (above - lower): -152.289579
+Welch t-statistic: 14.523856
+Welch p-value: 0.0000000000
+Mann-Whitney U statistic: 10105778.000000
+Mann-Whitney p-value: 0.0000000000
+
+Interpretation caution: these tests compare individual sales records. Multiple records can belong to the same order, so the independence assumption may be violated. Results show association, not causation.
