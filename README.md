@@ -64,10 +64,12 @@ The dataset is used for analytical and educational purposes.
 | Pandas | Data manipulation and preparation |
 | Matplotlib | Exploratory data visualizations |
 | SciPy | Statistical hypothesis testing |
+| Statsmodels | Order-clustered regression and Holt-Winters forecasting |
 | SQLite | Local database storage |
 | SQL | Business analysis and window functions |
 | Microsoft Excel | PivotTables, charts, and KPI calculations |
 | Power BI Desktop | Interactive dashboards and recommendations |
+| pytest | Automated data-quality checks |
 | Git and GitHub | Version control and project sharing |
 
 ## 6. Project Workflow
@@ -88,7 +90,7 @@ Used Python to generate charts and summary statistics to explore sales, profit, 
 
 ### Step 4: Database Creation
 
-Loaded the cleaned dataset into SQLite to support structured SQL analysis.
+Loaded the reporting-cutoff dataset into SQLite to support consistent SQL analysis. The full cleaned CSV remains available separately.
 
 ### Step 5: SQL Business Analysis
 
@@ -109,13 +111,11 @@ Developed SQL queries covering:
 
 Created PivotTables, charts, and KPI calculations to investigate category performance, regional performance, monthly trends, and discount-level profitability.
 
-### Step 7: Statistical Analysis
+### Step 7: Statistical and Customer Analysis
 
-Used Python and SciPy to compare records with discounts of 30% or less against records with discounts above 30%.
+The initial SciPy tests compare records with discounts of 30% or less against records with discounts above 30%; they are exploratory because they do not adjust for order-level dependence or other factors. The reproducible pipeline also runs a regression controlling for subcategory, segment, region, and quantity, with standard errors clustered by order, an order-cluster bootstrap confidence interval, and an observed-level subcategory break-even analysis.
 
-The analysis includes descriptive statistics, Welch's independent-samples t-test, and the Mann–Whitney U test.
-
-The initial tests operate at the individual sales-record level. Multiple records can belong to the same order, so the independence assumption may be violated. The results should therefore be treated as preliminary evidence of an association, not proof of causation.
+The pipeline calculates customer RFM scores, segments, and first-order-month cohort retention. Results describe this dataset and are not causal evidence.
 
 ### Step 8: Power BI Dashboard
 
@@ -134,7 +134,7 @@ The recommendations are based on the current dataset analysis and should be revi
 
 ## 7. Key Business Findings
 
-The following figures were calculated from the current cleaned dataset.
+The following figures were calculated from the complete cleaned dataset, including rows after the fixed reporting cutoff. Use the cutoff-based pipeline outputs for reporting-period analyses.
 
 | Metric | Result |
 |---|---:|
@@ -145,7 +145,7 @@ The following figures were calculated from the current cleaned dataset.
 | Total Distinct Orders | 5,111 |
 | Transaction Rows | 10,194 |
 
-**Note:** The dataset contains order dates through December 2026. Because those dates extend beyond the current date of October 31, 2026, the future-dated records should be investigated before the results are described as strictly historical performance.
+**Note:** The full dataset contains order dates through December 2026, which is after the current date of November 6, 2026. The reproducible reporting pipeline excludes orders after the fixed October 31, 2026 reporting cutoff from the database and analyses, while preserving the full cleaned export.
 
 ### Category Performance
 
@@ -207,9 +207,9 @@ Both Welch's t-test and the Mann–Whitney U test reported statistically signifi
 
 ### Reporting Period
 
-The supplied dataset contains order dates from January 3, 2023, through December 30, 2026. For reporting as of October 31, 2026, records after that date are excluded from the cutoff-based analysis.
+The supplied dataset contains order dates from January 3, 2023, through December 30, 2026. The pipeline uses a fixed October 31, 2026 reporting cutoff and excludes later orders from the reporting dataset and SQLite database.
 
-The original source data is preserved. Future-dated records are not automatically deleted because they are present in both the raw and cleaned datasets.
+The original source and full cleaned data are preserved. Future-dated records are not deleted from either.
 
 ### January–October Comparison
 
@@ -232,7 +232,66 @@ These results are based on the supplied dataset and do not independently establi
 A partial-year total should not be directly compared with a full-year total to determine year-over-year growth. The January–October comparison uses matching reporting periods to provide a more meaningful comparison.
 
 The source dataset's provenance and completeness have not been independently verified.
-## 8. Power BI Dashboard Features
+
+## 8. Additional Analyses and Reproducible Pipeline
+
+Run the complete workflow, including cleaning, cutoff filtering, SQLite loading, analyses, report generation, and automated checks, from the project root:
+
+```powershell
+python run_pipeline.py
+```
+
+The pipeline keeps `superstore_cleaned.csv` as the full cleaned data and creates `superstore_reporting.csv` for records through the reporting cutoff. SQLite and the analysis reports use that same reporting period.
+
+### Discount Analysis
+
+The regression models line-item profit against the two discount bands (`30% or less` and `above 30%`) and controls for subcategory, customer segment, region, and quantity. Standard errors are clustered by order to account for dependence among line items in the same order. The confidence interval for the mean profit difference is estimated by resampling orders, not individual rows.
+
+Subcategory break-even discounts are estimated by linear interpolation between adjacent observed discount levels where mean profit changes from positive to non-positive. Subcategories without an observed crossing are reported without an estimated threshold; these estimates are descriptive, not causal.
+
+Outputs are in `reports/statistical_analysis/`: clustered regression coefficients and summary, bootstrap interval, and per-subcategory break-even table.
+
+On the current reporting data, the adjusted above-30% band coefficient is **-$187.86 per line item** (order-clustered SE **$12.36**). The unadjusted above-30%-minus-lower-band mean difference is **-$147.22** with a cluster-bootstrap 95% CI of **[-$168.49, -$128.51]**. The median interpolated break-even is **25.7%** across the 13 subcategories with an observed crossing; this is not a universal pricing threshold.
+
+### RFM and Cohort Retention
+
+Customer recency is measured at the reporting cutoff; frequency counts distinct orders and monetary value sums sales. Each component is scored in quintiles and customers are assigned to four RFM segments. Monthly cohort retention counts distinct customers with an order in each month after their first order month.
+
+Outputs are in `reports/customer_analysis/`. The reporting data has **803 customers**; Champions is the largest profit-contributing segment at **33.3%**. The top segment's profit share is printed by the pipeline.
+
+### Monthly Sales Forecast
+
+An additive Holt-Winters model is validated on the most recent three reporting months and compared with a same-month-last-year baseline. The model is then fit to the full reporting series to forecast the next three months. Validation metrics and predictions are in `reports/forecast/`.
+
+For this dataset, validation MAPE was **22.97%** for Holt-Winters versus **31.79%** for the baseline (August–October 2026). The next-three-month point forecasts are in the CSV output.
+
+**Forecast limitation:** The supplied data is partly synthetic and its provenance and completeness have not been independently verified. Forecast errors on this dataset do not establish that the model is reliable for a real business; treat the forecast as an educational demonstration only.
+
+### Automated Data Checks
+
+`pytest` runs four checks as the final pipeline step:
+
+1. Order, customer, and product keys are non-null.
+2. Ship date is not before order date.
+3. Pandas and SQLite profit totals reconcile to within one cent.
+4. No reporting order is after the October 31, 2026 cutoff.
+
+### Power BI Measures and Market Basket
+
+`powerbi/measures.dax` contains date-table, year-over-year, month-to-date, rolling three-month average, and discount scenario measures. Create a relationship from the date table to `sales[Order Date]`, use the discount scenario value in a single-select slicer, and note the scenario measure's fixed-volume/fixed-cost assumption.
+
+The optional market basket analysis ranks subcategory pairs by support and lift. Results are in `reports/market_basket/subcategory_pairs.csv`.
+
+### Resume Statements
+
+Use the generated report values rather than placeholders when describing this work:
+
+- “Quantified the effect of discounting on profit using order-clustered regression, finding a median observed break-even discount of about **25.7%** across 13 subcategories.”
+- “Segmented **803** customers with RFM and measured cohort retention, identifying that Champions contribute **33.3%** of profit.”
+- “Built a reproducible analytics pipeline with **4 automated data-quality tests**.”
+- “Built DAX time-intelligence measures (YoY, rolling averages) and a what-if discount simulator.”
+
+## 9. Power BI Dashboard Features
 
 The main dashboard includes:
 
@@ -261,7 +320,7 @@ The separate Recommendations page presents business actions derived from the ana
 
 **Requirement:** The `.pbix` file must be opened using Power BI Desktop.
 
-## 9. Project Structure
+## 10. Project Structure
 
 ```text
 Retail-Sales-Analytics/
@@ -270,6 +329,7 @@ Retail-Sales-Analytics/
 │   │   └── sample_-_superstore.xls
 │   └── processed/
 │       ├── superstore_cleaned.csv
+│       ├── superstore_reporting.csv
 │       └── retail_sales.db
 ├── scripts/
 │   ├── inspect_data.py
@@ -277,25 +337,33 @@ Retail-Sales-Analytics/
 │   ├── eda_analysis.py
 │   ├── load_sqlite.py
 │   ├── run_sql_analysis.py
-│   └── discount_hypothesis_test.py
+│   ├── discount_hypothesis_test.py
+│   ├── advanced_analytics.py
+│   └── pipeline_config.py
+├── run_pipeline.py
+├── requirements.txt
+├── tests/
+│   └── test_pipeline.py
 ├── sql/
 │   └── business_analysis.sql
 ├── excel/
 │   └── Retail_Sales_Analysis.xlsx
 ├── powerbi/
 │   ├── Retail_Sales_Analytics.pbix
-│   └── dashboard_screenshot.png
+│   ├── dashboard_screenshot.png
+│   └── measures.dax
 ├── reports/
 │   ├── eda_charts/
-│   └── statistical_analysis/
-│       ├── discount_group_summary.csv
-│       └── discount_test_results.txt
+│   ├── statistical_analysis/
+│   ├── customer_analysis/
+│   ├── forecast/
+│   └── market_basket/
 └── README.md
 ```
 
-This structure reflects the intended project layout. Confirm that the listed files exist in your local repository before committing the README.
+The pipeline creates its analysis outputs under `reports/`.
 
-## 10. Setup and Installation
+## 11. Setup and Installation
 
 ### Requirements
 
@@ -332,26 +400,20 @@ If PowerShell blocks activation, you can use Command Prompt instead:
 ### Step 3: Install the Python dependencies
 
 ```powershell
-python -m pip install --upgrade pip
-python -m pip install pandas matplotlib openpyxl xlrd scipy
+python -m pip install -r requirements.txt
 ```
 
-### Step 4: Run the analysis scripts
+### Step 4: Run the reproducible pipeline
 
-Run these commands from the project root, in order:
+Run the end-to-end workflow from the project root:
 
 ```powershell
-python scripts/inspect_data.py
-python scripts/clean_data.py
-python scripts/eda_analysis.py
-python scripts/load_sqlite.py
-python scripts/run_sql_analysis.py
-python scripts/discount_hypothesis_test.py
+python run_pipeline.py
 ```
 
-The source dataset must be available at the path and filename expected by the scripts.
+The source dataset must be available at the path and filename expected by the scripts. The pipeline uses the documented October 31, 2026 cutoff.
 
-The inspection, cleaning, and database-loading scripts should be run before the downstream analyses when rebuilding the project from raw data.
+The component scripts can still be run separately for exploration, but `python run_pipeline.py` is the supported end-to-end entry point.
 
 ### Step 5: Open the Excel workbook
 
@@ -369,27 +431,26 @@ Open:
 
 Use Power BI Desktop to explore the dashboard and Recommendations page.
 
-## 11. Limitations
+## 12. Limitations
 
 - Results describe the available dataset and may not generalize to every retail business.
-- Future-dated records require investigation before final historical reporting.
-- The initial discount tests compare individual sales records and may violate the independence assumption when records share an order.
+- Orders after the October 31, 2026 cutoff are excluded from reporting but remain in the full source and cleaned exports.
+- The source data is partly synthetic; provenance and completeness have not been independently verified.
+- The forecast is an educational example and should not be treated as reliable real-business guidance.
+- The initial discount tests compare individual sales records and may violate the independence assumption when records share an order; the clustered model addresses within-order uncertainty but does not establish causation.
 - The statistical findings show association, not proof of causation.
 - The initial analysis is descriptive and does not establish causal relationships.
 - Further analysis could account for order-level dependence, product mix, customer characteristics, and other factors.
 
-## 12. Future Improvements
+## 13. Future Improvements
 
 Potential enhancements include:
 
-- Order-level statistical analysis of discount and profit relationships.
 - Product-level profitability and pricing analysis.
-- More detailed customer segmentation.
-- Additional data-quality checks and date validation.
 - Automated data refresh and report generation.
-- More advanced business intelligence measures.
+- External validation of the forecast against genuine business data.
 
-## 13. Conclusion
+## 14. Conclusion
 
 This project demonstrates an end-to-end retail analytics workflow, from raw data inspection and cleaning to SQL analysis, Excel reporting, statistical testing, and interactive Power BI dashboards.
 

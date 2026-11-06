@@ -1,0 +1,4 @@
+Validation months: 2026-08 to 2026-10
+Holt-Winters MAPE: 22.97%
+Same-month-last-year baseline MAPE: 31.79%
+Forecast is an educational illustration on a partly synthetic dataset and is not reliable for real-business planning.

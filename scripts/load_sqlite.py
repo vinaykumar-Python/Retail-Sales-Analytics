@@ -1,6 +1,7 @@
 import pandas as pd
 import sqlite3
 from pathlib import Path
+from pipeline_config import REPORTING_CUTOFF
 
 # --------------------------------------------------
 # 1. DEFINE PROJECT PATHS
@@ -37,7 +38,7 @@ if not CSV_FILE.exists():
 df = pd.read_csv(CSV_FILE)
 
 # --------------------------------------------------
-# 4. PREPARE DATE COLUMNS
+# 4. APPLY THE REPORTING CUTOFF AND PREPARE DATE COLUMNS
 # --------------------------------------------------
 
 for column in df.columns:
@@ -45,7 +46,18 @@ for column in df.columns:
         df[column] = pd.to_datetime(
             df[column],
             errors="coerce"
-        ).dt.strftime("%Y-%m-%d")
+        )
+
+if "Order Date" not in df.columns or df["Order Date"].isna().any():
+    raise ValueError("Order Date is missing or contains invalid values.")
+
+df = df.loc[
+    df["Order Date"] <= pd.Timestamp(REPORTING_CUTOFF)
+].copy()
+
+for column in df.columns:
+    if "date" in column.lower():
+        df[column] = df[column].dt.strftime("%Y-%m-%d")
 
 # --------------------------------------------------
 # 5. CREATE THE SQLITE DATABASE

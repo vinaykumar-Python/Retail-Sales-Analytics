@@ -8,12 +8,21 @@ from pathlib import Path
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 
+REPORTING_DATA_FILE = (
+    PROJECT_DIR
+    / "data"
+    / "processed"
+    / "superstore_reporting.csv"
+)
+
 DATA_FILE = (
     PROJECT_DIR
     / "data"
     / "processed"
     / "superstore_cleaned.csv"
 )
+if REPORTING_DATA_FILE.exists():
+    DATA_FILE = REPORTING_DATA_FILE
 
 OUTPUT_DIR = PROJECT_DIR / "reports" / "eda_charts"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

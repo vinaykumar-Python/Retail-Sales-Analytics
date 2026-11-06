@@ -1,0 +1,67 @@
+-- Add each expression below as a separate calculated table, column, or measure.
+-- Create a date table in Power BI, mark it as the Date table, and relate
+-- 'Date'[Date] to 'sales'[Order Date].
+Date =
+CALENDAR (
+    MIN ( 'sales'[Order Date] ),
+    MAX ( 'sales'[Order Date] )
+)
+
+YearMonth =
+FORMAT ( 'Date'[Date], "yyyy-MM" )
+
+Total Sales =
+SUM ( 'sales'[Sales] )
+
+Total Profit =
+SUM ( 'sales'[Profit] )
+
+Sales YoY % =
+VAR PriorYearSales =
+    CALCULATE ( [Total Sales], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+RETURN
+    DIVIDE ( [Total Sales] - PriorYearSales, PriorYearSales )
+
+Sales MTD =
+TOTALMTD ( [Total Sales], 'Date'[Date] )
+
+Rolling 3-Month Average Sales =
+VAR LastVisibleDate = MAX ( 'Date'[Date] )
+VAR VisibleMonths =
+    CALCULATETABLE (
+        VALUES ( 'Date'[YearMonth] ),
+        DATESINPERIOD ( 'Date'[Date], LastVisibleDate, -3, MONTH )
+    )
+RETURN
+    AVERAGEX ( VisibleMonths, CALCULATE ( [Total Sales] ) )
+
+-- Create this disconnected table for the what-if slicer.
+Discount Scenario =
+GENERATESERIES ( 0, 0.8, 0.05 )
+
+Selected Scenario Discount =
+SELECTEDVALUE ( 'Discount Scenario'[Value], 0 )
+
+-- Fixed sales volume and costs are assumed. This is a scenario estimate,
+-- not a causal or demand-response forecast.
+Estimated Profit at Scenario Discount =
+VAR ScenarioDiscount = [Selected Scenario Discount]
+RETURN
+    SUMX (
+        'sales',
+        VAR CurrentDiscount = 'sales'[Discount]
+        VAR NetSales = 'sales'[Sales]
+        VAR GrossSales = DIVIDE ( NetSales, 1 - CurrentDiscount )
+        VAR EstimatedPreDiscountProfit =
+            'sales'[Profit] + GrossSales - NetSales
+        RETURN
+            EstimatedPreDiscountProfit - GrossSales * ScenarioDiscount
+    )
+
+Discount Risk Profit =
+VAR ScenarioProfit = [Estimated Profit at Scenario Discount]
+RETURN
+    IF ( ScenarioProfit < 0, ScenarioProfit, BLANK () )
+
+Discount Risk Status =
+IF ( [Estimated Profit at Scenario Discount] < 0, "At risk", "Positive" )

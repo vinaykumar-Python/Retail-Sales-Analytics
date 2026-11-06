@@ -1,0 +1,54 @@
+Profit regression with order-clustered standard errors
+Observations: 9252
+Order clusters: 4613
+Discount coefficient: -187.8583
+Cluster-robust standard error: 12.3564
+95% confidence interval: [-212.0763, -163.6402]
+
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                 Profit   R-squared:                       0.138
+Model:                            OLS   Adj. R-squared:                  0.136
+Method:                 Least Squares   F-statistic:                     33.80
+Date:                Fri, 06 Nov 2026   Prob (F-statistic):          2.78e-137
+Time:                        11:39:26   Log-Likelihood:                -62719.
+No. Observations:                9252   AIC:                         1.255e+05
+Df Residuals:                    9228   BIC:                         1.257e+05
+Df Model:                          23                                         
+Covariance Type:              cluster                                         
+=====================================================================================================================================
+                                                                        coef    std err          z      P>|z|      [0.025      0.975]
+-------------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                            29.3520      6.597      4.449      0.000      16.422      42.282
+C(Discount_Band, Treatment(reference='30% or Less'))[T.Above 30%]  -187.8583     12.356    -15.203      0.000    -212.076    -163.640
+C(Q('Sub-Category'))[T.Appliances]                                   10.9581      7.380      1.485      0.138      -3.506      25.422
+C(Q('Sub-Category'))[T.Art]                                         -45.8018      4.087    -11.207      0.000     -53.812     -37.792
+C(Q('Sub-Category'))[T.Binders]                                      44.3276     10.903      4.066      0.000      22.958      65.697
+C(Q('Sub-Category'))[T.Bookcases]                                   -18.5494     11.755     -1.578      0.115     -41.589       4.490
+C(Q('Sub-Category'))[T.Chairs]                                      -13.0414      6.588     -1.979      0.048     -25.954      -0.129
+C(Q('Sub-Category'))[T.Copiers]                                     748.2993    178.517      4.192      0.000     398.413    1098.185
+C(Q('Sub-Category'))[T.Envelopes]                                   -26.1856      4.591     -5.704      0.000     -35.184     -17.188
+C(Q('Sub-Category'))[T.Fasteners]                                   -47.4645      7.907     -6.003      0.000     -62.961     -31.968
+C(Q('Sub-Category'))[T.Furnishings]                                 -13.5430      4.786     -2.830      0.005     -22.923      -4.163
+C(Q('Sub-Category'))[T.Labels]                                      -39.0273      4.569     -8.542      0.000     -47.982     -30.073
+C(Q('Sub-Category'))[T.Machines]                                     93.8922     96.799      0.970      0.332     -95.830     283.614
+C(Q('Sub-Category'))[T.Paper]                                       -29.7703      4.133     -7.204      0.000     -37.870     -21.670
+C(Q('Sub-Category'))[T.Phones]                                       17.1271      5.514      3.106      0.002       6.319      27.935
+C(Q('Sub-Category'))[T.Storage]                                     -30.7280      4.901     -6.270      0.000     -40.334     -21.122
+C(Q('Sub-Category'))[T.Supplies]                                    -58.0770      9.203     -6.311      0.000     -76.114     -40.040
+C(Q('Sub-Category'))[T.Tables]                                      -37.6930     12.636     -2.983      0.003     -62.459     -12.927
+C(Segment)[T.Corporate]                                               6.2190      5.055      1.230      0.219      -3.688      16.126
+C(Segment)[T.Home Office]                                             5.8239      5.886      0.989      0.322      -5.712      17.360
+C(Region)[T.East]                                                    -3.0738      7.557     -0.407      0.684     -17.885      11.738
+C(Region)[T.South]                                                   -5.5478      7.862     -0.706      0.480     -20.957       9.861
+C(Region)[T.West]                                                   -17.7960      7.518     -2.367      0.018     -32.531      -3.061
+Quantity                                                              7.9567      1.382      5.759      0.000       5.249      10.665
+==============================================================================
+Omnibus:                    12762.179   Durbin-Watson:                   1.998
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):         71126012.666
+Skew:                           6.850   Prob(JB):                         0.00
+Kurtosis:                     432.320   Cond. No.                         74.1
+==============================================================================
+
+Notes:
+[1] Standard Errors are robust to cluster correlation (CRV1)

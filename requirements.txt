@@ -1,0 +1,7 @@
+pandas
+matplotlib
+openpyxl
+xlrd
+scipy
+statsmodels
+pytest

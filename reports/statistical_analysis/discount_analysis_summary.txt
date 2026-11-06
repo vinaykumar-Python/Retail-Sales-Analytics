@@ -1,0 +1,4 @@
+Order-clustered regression and discount bootstrap completed.
+Mean profit difference (above 30% minus 30% or less): -147.22
+Order-cluster bootstrap 95% CI: [-168.49, -128.51]
+Median interpolated break-even discount among 13 subcategories with a positive-to-nonpositive observed transition: 25.7%
